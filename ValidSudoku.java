@@ -1,6 +1,6 @@
 // Approach: We use a brute-force approach, checking each cell individually to determine if it belongs to a valid row, column,
 // and sub-box. An array of size n is used to track whether a number has already appeared in the current row, column, or sub-box.
-// Time Complexity: O(n^3) where n - #rows
+// Time Complexity: O(n^3) where n - #rows. Can be reduced to O(n^2) using hashset but uses O(n^2) extra space.
 // Space Complexity: O(n)
 // Did this code successfully run on Leetcode : Yes
 // Any problem you faced while coding this : No
@@ -8,6 +8,9 @@
 // https://leetcode.com/problems/valid-sudoku/description/
 // https://www.geeksforgeeks.org/check-if-given-sudoku-board-configuration-is-valid-or-not/
 // https://www.geeksforgeeks.org/java-program-to-convert-char-to-int/
+
+import java.util.Set;
+import java.util.HashSet;
 
 public class ValidSudoku {
 
@@ -61,6 +64,42 @@ public class ValidSudoku {
                 if (!isValidRow(board, i) || !isValidCol(board, j) || !isValidBox(board, i - i % 3, j - j % 3)) {
                     return false;
                 }
+            }
+        }
+        return true;
+    }
+
+    boolean validateSudokuBoardUsingHashSet(char[][] board) {
+        Set<Character>[] rows = new HashSet[9];
+        Set<Character>[] cols = new HashSet[9];
+        Set<Character>[] boxes = new HashSet[9];
+
+        for (int i = 0; i < 9; i++) {
+            rows[i] = new HashSet<>();
+            cols[i] = new HashSet<>();
+            boxes[i] = new HashSet<>();
+        }
+
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                if (board[i][j] == '.') {
+                    continue;
+                }
+                if (rows[i].contains(board[i][j])) {
+                    return false;
+                }
+                rows[i].add(board[i][j]);
+
+                if (cols[j].contains(board[i][j])) {
+                    return false;
+                }
+                cols[j].add(board[i][j]);
+
+                int boxIdx = (i / 3) * 3 + (j / 3);
+                if (boxes[boxIdx].contains(board[i][j])) {
+                    return false;
+                }
+                boxes[boxIdx].add(board[i][j]);
             }
         }
         return true;
